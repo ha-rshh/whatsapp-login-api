@@ -9,8 +9,10 @@ router.post("/", async (req, res) => {
     console.log(req.body);
     const user = new Users(req.body);
     const createUser = await user.save();
+    console.log(createUser)
     res.status(201).send(createUser);
   } catch (e) {
+    console.log(e);
     res.status(400).send(e);
   }
 });
