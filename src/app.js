@@ -5,6 +5,7 @@ const cors = require("cors");
 // c
 require("./db/conn");
 const userRouter = require("./routers/user");
+const messageRouter = require("./routers/messages");
 
 // const Users = require("./models/users");
 
@@ -14,6 +15,7 @@ app.use(cors());
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
+app.use(messageRouter)
 app.use(userRouter);
 
 app.listen(port, () => {
