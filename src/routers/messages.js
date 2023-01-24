@@ -33,31 +33,33 @@ router.post("/send", async (req, res) => {
         }
       );
     }
-    var users = await Message.find({
-      to: req.body.from,
-      from: req.body.to,
-    });
-    if (!users.length) {
-      var user = new Message({
-        ...data,
-        email: req.body.from + req.body.to,
+    if(req.body.from !==req.body.to) {
+      var users = await Message.find({
         to: req.body.from,
         from: req.body.to,
-        message: JSON.stringify([req.body.message]),
       });
-      var createUser = await user.save();
-      console.log(createUser);
-    } else {
-      console.log(users);
-      const messages = [...JSON.parse(users[0].message), data.message];
-      await Message.updateOne(
-        { to: data.from, from: data.to },
-        {
-          $set: {
-            message: JSON.stringify(messages),
-          },
-        }
-      );
+      if (!users.length) {
+        var user = new Message({
+          ...data,
+          email: req.body.from + req.body.to,
+          to: req.body.from,
+          from: req.body.to,
+          message: JSON.stringify([req.body.message]),
+        });
+        var createUser = await user.save();
+        console.log(createUser);
+      } else {
+        console.log(users);
+        const messages = [...JSON.parse(users[0].message), data.message];
+        await Message.updateOne(
+          { to: data.from, from: data.to },
+          {
+            $set: {
+              message: JSON.stringify(messages),
+            },
+          }
+        );
+      }
     }
     res.status(201).send({
       message: "Message send Successfully",
